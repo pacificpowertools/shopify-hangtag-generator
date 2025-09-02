@@ -1,0 +1,21 @@
+{
+  "name": "shopify-hangtag-generator",
+  "version": "1.0.0",
+  "description": "Bulk hang tag generator for Shopify stores",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "@shopify/shopify-api": "^7.7.0",
+    "express": "^4.18.2",
+    "pdfkit": "^0.13.0",
+    "jszip": "^3.10.1",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
