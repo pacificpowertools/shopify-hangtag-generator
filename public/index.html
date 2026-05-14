@@ -1,649 +1,956 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hang Tag Generator - Pacific Power Tools</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f6f6f7;
-            padding: 20px;
-            color: #202223;
-        }
-        
-        .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        .app-header {
-            background: linear-gradient(135deg, #00848e 0%, #0070f3 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        .app-header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            padding: 30px;
-        }
-        
-        .control-panel {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            border: 1px solid #e1e3e5;
-        }
-        
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #202223;
-            margin-bottom: 20px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid #e1e3e5;
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 24px;
-            font-weight: 700;
-            color: #00848e;
-            display: block;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #6d7175;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-            color: #202223;
-            font-size: 14px;
-        }
-        
-        .form-input, .form-select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #c9cccf;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        
-        .btn {
-            padding: 14px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        
-        .btn-primary {
-            background: #00848e;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #006d75;
-        }
-        
-        .btn-primary:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .file-upload {
-            border: 2px dashed #c9cccf;
-            padding: 20px;
-            text-align: center;
-            border-radius: 6px;
-            background: white;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .file-upload:hover {
-            border-color: #00848e;
-            background: #f8fffe;
-        }
-        
-        .progress-container {
-            margin: 20px 0;
-            display: none;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e1e3e5;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: #00848e;
-            transition: width 0.3s ease;
-            width: 0%;
-        }
-        
-        .progress-text {
-            text-align: center;
-            margin-top: 8px;
-            font-size: 12px;
-            color: #6d7175;
-        }
-        
-        .product-list {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #e1e3e5;
-            border-radius: 6px;
-            margin-top: 15px;
-        }
-        
-        .product-item {
-            padding: 12px;
-            border-bottom: 1px solid #e1e3e5;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-        }
-        
-        .product-item:last-child {
-            border-bottom: none;
-        }
-        
-        .product-item:nth-child(even) {
-            background: #f8f9fa;
-        }
-        
-        .product-info {
-            flex: 1;
-        }
-        
-        .product-sku {
-            font-weight: 600;
-            color: #00848e;
-        }
-        
-        .product-name {
-            color: #6d7175;
-            margin-top: 2px;
-        }
-        
-        .product-price {
-            font-weight: 600;
-            color: #202223;
-        }
-        
-        .status-indicator {
-            padding: 2px 6px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 500;
-            margin-top: 2px;
-        }
-        
-        .status-ready {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-recon {
-            background: #cce5ff;
-            color: #004085;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hang Tag Generator — Pacific Power Tools</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f1f3f5;
+      color: #212529;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .app-header {
+      background: #fff;
+      border-bottom: 1px solid #dee2e6;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .app-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #00848e;
+    }
+    .app-header h1 span { color: #868e96; font-weight: 400; font-size: 14px; margin-left: 8px; }
+    .btn-settings {
+      background: none;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #495057;
+      transition: background 0.15s;
+    }
+    .btn-settings:hover { background: #f8f9fa; }
+
+    /* ── Settings Panel ── */
+    .settings-panel {
+      background: #fff;
+      border-bottom: 1px solid #dee2e6;
+      padding: 20px 24px;
+      display: none;
+    }
+    .settings-panel.open { display: block; }
+    .settings-inner {
+      max-width: 680px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: end;
+    }
+    .settings-inner .span2 { grid-column: span 2; }
+    .settings-note {
+      font-size: 12px;
+      color: #868e96;
+      margin-top: 4px;
+    }
+
+    /* ── Main layout ── */
+    .main {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff;
+      border: 1px solid #dee2e6;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid #f1f3f5;
+      font-size: 13px;
+      font-weight: 600;
+      color: #495057;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    /* ── Form controls ── */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #495057;
+      margin-bottom: 5px;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #212529;
+      background: #fff;
+      transition: border-color 0.15s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #00848e;
+      box-shadow: 0 0 0 3px rgba(0, 132, 142, 0.12);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+      white-space: nowrap;
+    }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: #00848e; color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #006e77; }
+    .btn-secondary { background: #e9ecef; color: #495057; }
+    .btn-secondary:hover:not(:disabled) { background: #dee2e6; }
+    .btn-danger { background: #fff0f0; color: #c92a2a; border: 1px solid #ffa8a8; }
+    .btn-danger:hover:not(:disabled) { background: #ffe3e3; }
+    .btn-sm { padding: 6px 11px; font-size: 12px; }
+    .btn-full { width: 100%; }
+
+    /* ── Search ── */
+    .search-wrap { padding: 14px 18px; }
+    .search-input-wrap {
+      position: relative;
+    }
+    .search-input-wrap input {
+      padding-left: 36px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #868e96;
+      font-size: 15px;
+      pointer-events: none;
+    }
+    .search-spinner {
+      position: absolute;
+      right: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      border: 2px solid #dee2e6;
+      border-top-color: #00848e;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+    .search-results {
+      margin-top: 10px;
+      border: 1px solid #dee2e6;
+      border-radius: 7px;
+      overflow: hidden;
+      display: none;
+    }
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #f1f3f5;
+      transition: background 0.1s;
+    }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: #f8f9fa; }
+    .search-result-item.already-added { opacity: 0.45; cursor: default; }
+    .search-thumb {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      border-radius: 4px;
+      border: 1px solid #e9ecef;
+      background: #f8f9fa;
+      flex-shrink: 0;
+    }
+    .search-thumb-placeholder {
+      width: 44px;
+      height: 44px;
+      border-radius: 4px;
+      border: 1px solid #e9ecef;
+      background: #f1f3f5;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .search-result-info { flex: 1; min-width: 0; }
+    .search-result-sku { font-size: 11px; font-weight: 600; color: #00848e; }
+    .search-result-title {
+      font-size: 13px;
+      color: #212529;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .search-result-price { font-size: 12px; color: #868e96; }
+    .search-add-badge {
+      font-size: 11px;
+      background: #e3fafc;
+      color: #0c8599;
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .search-no-results {
+      padding: 20px;
+      text-align: center;
+      color: #868e96;
+      font-size: 13px;
+    }
+
+    /* ── Credentials warning ── */
+    .creds-notice {
+      margin: 10px 18px 0;
+      padding: 10px 14px;
+      background: #fff3bf;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #7c4d03;
+      display: none;
+    }
+    .creds-notice.show { display: block; }
+    .creds-notice a { color: #7c4d03; font-weight: 600; text-decoration: underline; cursor: pointer; }
+
+    /* ── Queue ── */
+    .queue-empty {
+      padding: 48px 24px;
+      text-align: center;
+      color: #adb5bd;
+    }
+    .queue-empty-icon { font-size: 40px; margin-bottom: 10px; }
+    .queue-empty p { font-size: 14px; }
+
+    .queue-item {
+      border-bottom: 1px solid #f1f3f5;
+    }
+    .queue-item:last-child { border-bottom: none; }
+    .queue-item-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+    }
+    .queue-thumb {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      border-radius: 5px;
+      border: 1px solid #e9ecef;
+      background: #f8f9fa;
+      flex-shrink: 0;
+    }
+    .queue-thumb-placeholder {
+      width: 52px;
+      height: 52px;
+      border-radius: 5px;
+      border: 1px solid #e9ecef;
+      background: #f1f3f5;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .queue-item-info { flex: 1; min-width: 0; }
+    .queue-item-sku { font-size: 12px; font-weight: 700; color: #00848e; }
+    .queue-item-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #212529;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .queue-item-meta { font-size: 12px; color: #868e96; margin-top: 2px; }
+    .queue-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    /* Edit form (collapsible) */
+    .queue-edit-form {
+      padding: 14px 16px 16px;
+      background: #f8f9fa;
+      border-top: 1px solid #f1f3f5;
+      display: none;
+    }
+    .queue-edit-form.open { display: block; }
+    .edit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .edit-grid .span2 { grid-column: span 2; }
+    .edit-form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    /* Tag badges on queue items */
+    .tag-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .badge-recon { background: #dbe4ff; color: #3b5bdb; }
+    .badge-msrp { background: #d3f9d8; color: #2f9e44; }
+    .badge-includes { background: #fff3bf; color: #7c4d03; }
+    .badge-banner { background: #ffe3e3; color: #c92a2a; }
+
+    /* ── Download bar ── */
+    .download-bar {
+      background: #fff;
+      border: 1px solid #dee2e6;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .download-bar .format-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .download-bar label { margin: 0; white-space: nowrap; }
+    .download-bar select { width: auto; }
+    .queue-count {
+      font-size: 13px;
+      color: #868e96;
+      white-space: nowrap;
+    }
+
+    /* ── Progress overlay ── */
+    .progress-bar-wrap {
+      height: 5px;
+      background: #e9ecef;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 10px;
+      display: none;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: #00848e;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+    .progress-label {
+      font-size: 12px;
+      color: #868e96;
+      margin-top: 5px;
+      display: none;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #212529;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+      max-width: 360px;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.error { background: #c92a2a; }
+    .toast.success { background: #2f9e44; }
+  </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="app-header">
-            <h1>🏷️ Bulk Hang Tag Generator</h1>
-            <p>Generate professional hang tags for all your products with one click</p>
+
+<!-- Header -->
+<header class="app-header">
+  <h1>Hang Tag Generator <span>Pacific Power Tools</span></h1>
+  <button class="btn-settings" id="settingsToggle">
+    <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+    </svg>
+    Settings
+  </button>
+</header>
+
+<!-- Settings Panel -->
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-inner">
+    <div>
+      <label>Shopify Store Domain</label>
+      <input type="text" id="shopifyDomain" placeholder="your-store.myshopify.com">
+      <p class="settings-note">Your .myshopify.com domain (not your custom domain)</p>
+    </div>
+    <div>
+      <label>Admin API Access Token</label>
+      <input type="password" id="shopifyToken" placeholder="shpat_...">
+      <p class="settings-note">Create a Custom App in Shopify Admin → Apps → App development</p>
+    </div>
+    <div>
+      <label>Store URL (for QR codes)</label>
+      <input type="text" id="storeUrl" placeholder="https://pacificpowertools.com" value="https://pacificpowertools.com">
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:8px;">
+      <button class="btn btn-primary" id="saveSettings">Save Settings</button>
+      <button class="btn btn-secondary" id="testConnection">Test Connection</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Left: Search -->
+  <div>
+    <div class="card">
+      <div class="card-header">Search Products</div>
+      <div id="credsNotice" class="creds-notice show">
+        Shopify credentials not set. <a onclick="document.getElementById('settingsToggle').click()">Open Settings</a> to connect your store.
+      </div>
+      <div class="search-wrap">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search by product title..." autocomplete="off">
+          <div class="search-spinner" id="searchSpinner"></div>
         </div>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+  </div>
 
-        <div class="main-content">
-            <!-- Control Panel -->
-            <div class="control-panel">
-                <h2 class="section-title">📊 Product Data</h2>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-number" id="totalProducts">0</span>
-                        <span class="stat-label">Total Products</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="selectedProducts">0</span>
-                        <span class="stat-label">Selected</span>
-                    </div>
-                </div>
-
-                <div class="file-upload" id="fileUpload">
-                    <div style="font-size: 24px; margin-bottom: 8px;">📁</div>
-                    <p><strong>Upload Shopify Product Export</strong></p>
-                    <p style="font-size: 12px; color: #6d7175; margin-top: 4px;">CSV file from your Shopify admin</p>
-                    <input type="file" id="csvFile" accept=".csv" style="display: none;">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Vendor Filter:</label>
-                    <select class="form-select" id="vendorFilter">
-                        <option value="">All Vendors</option>
-                    </select>
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" id="includeRecon" checked>
-                    <label>Include Reconditioned Products</label>
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" id="includeKits" checked>
-                    <label>Include Kit Products</label>
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" id="priceChangesOnly">
-                    <label>Only products with sale pricing</label>
-                </div>
-
-                <h3 class="section-title" style="margin-top: 25px;">🎨 Design Options</h3>
-                
-                <div class="form-group">
-                    <label class="form-label">Font Family:</label>
-                    <select class="form-select" id="fontFamily">
-                        <option value="Arial">Arial</option>
-                        <option value="Helvetica">Helvetica</option>
-                        <option value="Calibri">Calibri</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Title Size: <span id="titleSizeValue">14px</span></label>
-                    <input type="range" class="form-input" id="titleSize" min="10" max="18" value="14">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Price Size: <span id="priceSizeValue">32px</span></label>
-                    <input type="range" class="form-input" id="priceSize" min="24" max="40" value="32">
-                </div>
-
-                <button class="btn btn-primary" onclick="generateAllTags()" disabled id="generateBtn">
-                    📦 Generate All Hang Tags
-                </button>
-
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressBar"></div>
-                    </div>
-                    <div class="progress-text" id="progressText">Processing...</div>
-                </div>
-            </div>
-
-            <!-- Preview Panel -->
-            <div class="control-panel">
-                <h2 class="section-title">👁️ Product Preview</h2>
-                
-                <div class="product-list" id="productList">
-                    <div style="text-align: center; padding: 40px; color: #6d7175;">
-                        Upload your Shopify product export CSV to get started
-                    </div>
-                </div>
-            </div>
+  <!-- Right: Queue + Download -->
+  <div>
+    <div class="card" id="queueCard">
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>Tag Queue</span>
+        <span id="queueBadge" style="font-size:12px;background:#e3fafc;color:#0c8599;padding:2px 10px;border-radius:10px;display:none;">0 products</span>
+      </div>
+      <div id="queueList">
+        <div class="queue-empty">
+          <div class="queue-empty-icon">🏷️</div>
+          <p>Search for products on the left and add them here.</p>
         </div>
+      </div>
     </div>
 
-    <script>
-        let allProducts = [];
-        let filteredProducts = [];
+    <div class="download-bar" id="downloadBar">
+      <div class="format-group">
+        <label for="formatSelect">Format:</label>
+        <select id="formatSelect">
+          <option value="pdf">PDF</option>
+          <option value="png">PNG Image</option>
+          <option value="both">Both (ZIP)</option>
+        </select>
+      </div>
+      <span class="queue-count" id="queueCount">0 products in queue</span>
+      <button class="btn btn-primary" id="generateAllBtn" disabled>
+        ⬇ Download All Tags
+      </button>
+    </div>
+    <div class="progress-bar-wrap" id="progressWrap">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-label" id="progressLabel"></div>
+  </div>
+</div>
 
-        // File upload handler
-        document.getElementById('fileUpload').addEventListener('click', () => {
-            document.getElementById('csvFile').click();
-        });
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
-        document.getElementById('csvFile').addEventListener('change', handleFileUpload);
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let queue = []; // Array of product objects (with user overrides merged in)
+let searchDebounce = null;
 
-        async function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+// ─── Settings ────────────────────────────────────────────────────────────────
+const SETTINGS_KEY = 'hangtag_settings';
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                parseCSVData(e.target.result);
-            };
-            reader.readAsText(file);
-        }
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+    document.getElementById('shopifyDomain').value = s.domain || '';
+    document.getElementById('shopifyToken').value = s.token || '';
+    document.getElementById('storeUrl').value = s.storeUrl || 'https://pacificpowertools.com';
+    updateCredsNotice();
+  } catch {}
+}
 
-        function parseCSVData(csvText) {
-            try {
-                const lines = csvText.split('\n');
-                const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
-                
-                const products = [];
-                const seenHandles = new Set();
-                
-                for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i];
-                    if (!line.trim()) continue;
-                    
-                    // Simple CSV parsing - handles most cases
-                    const values = [];
-                    let current = '';
-                    let inQuotes = false;
-                    
-                    for (let j = 0; j < line.length; j++) {
-                        const char = line[j];
-                        if (char === '"') {
-                            inQuotes = !inQuotes;
-                        } else if (char === ',' && !inQuotes) {
-                            values.push(current.trim());
-                            current = '';
-                        } else {
-                            current += char;
-                        }
-                    }
-                    values.push(current.trim()); // Last value
-                    
-                    const product = {};
-                    headers.forEach((header, index) => {
-                        product[header] = values[index] ? values[index].replace(/^"|"$/g, '') : '';
-                    });
-                    
-                    // Only add unique products (not image variants)
-                    const handle = product.Handle;
-                    if (handle && !seenHandles.has(handle) && product.Title) {
-                        seenHandles.add(handle);
-                        
-                        // Normalize data for easier access
-                        product.sku = product['Variant SKU'];
-                        product.title = product.Title;
-                        product.vendor = product.Vendor;
-                        product.price = product['Variant Price'];
-                        product.compare_at_price = product['Variant Compare At Price'];
-                        product.tags = product.Tags;
-                        product.body_html = product['Body (HTML)'];
-                        
-                        products.push(product);
-                    }
-                }
-                
-                allProducts = products;
-                console.log(`Loaded ${products.length} unique products`);
-                
-                updateStats();
-                populateVendorFilter();
-                filterProducts();
-                updateProductList();
-                
-                document.getElementById('generateBtn').disabled = false;
-                
-            } catch (error) {
-                console.error('Error parsing CSV:', error);
-                alert('Error reading CSV file. Please make sure it\'s a valid Shopify export.');
-            }
-        }
+function saveSettings() {
+  const s = {
+    domain: document.getElementById('shopifyDomain').value.trim(),
+    token: document.getElementById('shopifyToken').value.trim(),
+    storeUrl: document.getElementById('storeUrl').value.trim()
+  };
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  updateCredsNotice();
+  showToast('Settings saved.', 'success');
+}
 
-        function updateStats() {
-            const reconCount = allProducts.filter(p => 
-                (p.tags && p.tags.includes('Recon')) || 
-                (p.sku && p.sku.endsWith('-R'))
-            ).length;
+function getSettings() {
+  try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); } catch { return {}; }
+}
 
-            document.getElementById('totalProducts').textContent = allProducts.length;
-            document.getElementById('selectedProducts').textContent = filteredProducts.length;
-        }
+function updateCredsNotice() {
+  const s = getSettings();
+  const missing = !s.domain || !s.token;
+  document.getElementById('credsNotice').classList.toggle('show', missing);
+}
 
-        function populateVendorFilter() {
-            const vendors = [...new Set(allProducts.map(p => p.vendor).filter(Boolean))];
-            const select = document.getElementById('vendorFilter');
-            select.innerHTML = '<option value="">All Vendors</option>';
-            
-            vendors.forEach(vendor => {
-                const option = document.createElement('option');
-                option.value = vendor;
-                option.textContent = vendor;
-                select.appendChild(option);
-            });
-        }
+document.getElementById('settingsToggle').addEventListener('click', () => {
+  document.getElementById('settingsPanel').classList.toggle('open');
+});
+document.getElementById('saveSettings').addEventListener('click', () => {
+  saveSettings();
+  document.getElementById('settingsPanel').classList.remove('open');
+});
+document.getElementById('testConnection').addEventListener('click', async () => {
+  saveSettings();
+  try {
+    const resp = await shopifySearch('test');
+    showToast(`Connected! Found ${resp.products.length} result(s) for "test".`, 'success');
+  } catch (e) {
+    showToast(`Connection failed: ${e.message}`, 'error');
+  }
+});
 
-        function filterProducts() {
-            const vendorFilter = document.getElementById('vendorFilter').value;
-            const includeRecon = document.getElementById('includeRecon').checked;
-            const includeKits = document.getElementById('includeKits').checked;
-            const priceChangesOnly = document.getElementById('priceChangesOnly').checked;
+// ─── Shopify search ───────────────────────────────────────────────────────────
+async function shopifySearch(query) {
+  const s = getSettings();
+  const resp = await fetch(`/api/shopify/search?q=${encodeURIComponent(query)}&limit=15`, {
+    headers: {
+      'x-shopify-domain': s.domain || '',
+      'x-shopify-token': s.token || ''
+    }
+  });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.error || 'Search failed');
+  return data;
+}
 
-            filteredProducts = allProducts.filter(product => {
-                // Vendor filter
-                if (vendorFilter && product.vendor !== vendorFilter) return false;
-                
-                // Recon filter
-                const isRecon = (product.tags && product.tags.includes('Recon')) || 
-                               (product.sku && product.sku.endsWith('-R'));
-                if (isRecon && !includeRecon) return false;
-                
-                // Kit filter
-                const isKit = product.body_html && product.body_html.includes('INCLUDES');
-                if (isKit && !includeKits) return false;
-                
-                // Price change filter
-                if (priceChangesOnly) {
-                    const price = parseFloat(product.price || 0);
-                    const comparePrice = parseFloat(product.compare_at_price || 0);
-                    if (!comparePrice || comparePrice <= price) return false;
-                }
-                
-                return true;
-            });
+function normalizeShopifyProduct(p) {
+  const variant = p.variants?.[0] || {};
+  const image = p.images?.[0];
+  return {
+    shopify_id: p.id,
+    title: p.title || '',
+    handle: p.handle || '',
+    vendor: p.vendor || 'makita',
+    tags: p.tags || '',
+    sku: variant.sku || '',
+    price: variant.price || '0.00',
+    compare_at_price: variant.compare_at_price || '',
+    image_url: image?.src || '',
+    includes_list: extractIncludes(p.body_html || ''),
+    top_banner: '',
+    show_recon_banner: (p.tags || '').toLowerCase().includes('recon') || (variant.sku || '').endsWith('-R')
+  };
+}
 
-            updateStats();
-        }
+function extractIncludes(html) {
+  const stripped = html.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ');
+  const m = stripped.match(/(?:TOOLS?\s+INCLUDED|INCLUDES)\s*:?\s*(.*?)(?:\n|$)/i);
+  if (!m) return [];
+  return m[1].split(/[,•\n]/).map(s => s.trim()).filter(s => s.length > 1).slice(0, 8);
+}
 
-        function updateProductList() {
-            const container = document.getElementById('productList');
-            container.innerHTML = '';
-            
-            if (filteredProducts.length === 0) {
-                container.innerHTML = 
-                    '<div style="text-align: center; padding: 40px; color: #6d7175;">No products match your filters</div>';
-                return;
-            }
-            
-            const displayProducts = filteredProducts.slice(0, 50);
-            
-            displayProducts.forEach(product => {
-                const isRecon = (product.tags && product.tags.includes('Recon')) || 
-                               (product.sku && product.sku.endsWith('-R'));
-                const price = parseFloat(product.price || 0);
-                const comparePrice = parseFloat(product.compare_at_price || 0);
-                const hasDiscount = comparePrice > price;
-                
-                const item = document.createElement('div');
-                item.className = 'product-item';
-                item.innerHTML = `
-                    <div class="product-info">
-                        <div class="product-sku">${product.sku || 'No SKU'}</div>
-                        <div class="product-name">${product.title?.substring(0, 50) || 'Untitled'}...</div>
-                    </div>
-                    <div>
-                        <div class="product-price">
-                            $${price.toFixed(2)}
-                            ${hasDiscount ? `<br><small style="text-decoration: line-through; color: #999;">$${comparePrice.toFixed(2)}</small>` : ''}
-                        </div>
-                        ${isRecon ? '<div class="status-indicator status-recon">Recon</div>' : '<div class="status-indicator status-ready">Ready</div>'}
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-            
-            if (filteredProducts.length > 50) {
-                const more = document.createElement('div');
-                more.className = 'product-item';
-                more.style.textAlign = 'center';
-                more.style.color = '#6d7175';
-                more.innerHTML = `... and ${filteredProducts.length - 50} more products`;
-                container.appendChild(more);
-            }
-        }
+// ─── Search UI ────────────────────────────────────────────────────────────────
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+const searchSpinner = document.getElementById('searchSpinner');
 
-        async function generateAllTags() {
-            if (filteredProducts.length === 0) {
-                alert('No products selected. Please upload a CSV file and adjust filters.');
-                return;
-            }
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchDebounce);
+  const q = searchInput.value.trim();
+  if (q.length < 2) {
+    searchResults.style.display = 'none';
+    return;
+  }
+  searchSpinner.style.display = 'block';
+  searchDebounce = setTimeout(() => runSearch(q), 400);
+});
 
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            const generateBtn = document.getElementById('generateBtn');
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { searchResults.style.display = 'none'; searchInput.blur(); }
+});
 
-            progressContainer.style.display = 'block';
-            generateBtn.disabled = true;
-            generateBtn.textContent = 'Generating...';
-            progressText.textContent = `Generating ${filteredProducts.length} hang tags...`;
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) searchResults.style.display = 'none';
+});
 
-            try {
-                const options = {
-                    fontFamily: document.getElementById('fontFamily').value,
-                    titleSize: document.getElementById('titleSize').value,
-                    priceSize: document.getElementById('priceSize').value
-                };
+async function runSearch(q) {
+  try {
+    const data = await shopifySearch(q);
+    searchSpinner.style.display = 'none';
+    renderSearchResults(data.products || []);
+  } catch (err) {
+    searchSpinner.style.display = 'none';
+    renderSearchError(err.message);
+  }
+}
 
-                // Simulate progress
-                let progress = 0;
-                const progressInterval = setInterval(() => {
-                    progress += Math.random() * 15;
-                    if (progress > 90) progress = 90;
-                    progressBar.style.width = progress + '%';
-                }, 200);
+function renderSearchResults(products) {
+  searchResults.innerHTML = '';
+  if (products.length === 0) {
+    searchResults.innerHTML = '<div class="search-no-results">No products found.</div>';
+    searchResults.style.display = 'block';
+    return;
+  }
 
-                const response = await fetch('/api/generate-tags', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        products: filteredProducts,
-                        options: options
-                    })
-                });
+  products.forEach(p => {
+    const norm = normalizeShopifyProduct(p);
+    const alreadyAdded = queue.some(q => q.shopify_id === norm.shopify_id);
+    const item = document.createElement('div');
+    item.className = 'search-result-item' + (alreadyAdded ? ' already-added' : '');
 
-                clearInterval(progressInterval);
-                progressBar.style.width = '100%';
+    const priceLabel = norm.compare_at_price && parseFloat(norm.compare_at_price) > parseFloat(norm.price)
+      ? `$${norm.price} <s style="color:#adb5bd">$${norm.compare_at_price}</s>`
+      : `$${norm.price}`;
 
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Failed to generate tags');
-                }
+    item.innerHTML = `
+      ${norm.image_url
+        ? `<img class="search-thumb" src="${escHtml(norm.image_url)}" alt="" loading="lazy">`
+        : `<div class="search-thumb-placeholder">🔧</div>`}
+      <div class="search-result-info">
+        <div class="search-result-sku">${escHtml(norm.sku || norm.handle)}</div>
+        <div class="search-result-title">${escHtml(norm.title)}</div>
+        <div class="search-result-price">${priceLabel}</div>
+      </div>
+      ${alreadyAdded
+        ? '<span class="search-add-badge">Added ✓</span>'
+        : '<span class="search-add-badge">+ Add</span>'}
+    `;
 
-                // Download the ZIP file
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `hang-tags-${new Date().toISOString().split('T')[0]}.zip`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
+    if (!alreadyAdded) {
+      item.addEventListener('click', () => {
+        addToQueue(norm);
+        searchResults.style.display = 'none';
+        searchInput.value = '';
+      });
+    }
+    searchResults.appendChild(item);
+  });
 
-                progressText.textContent = `Complete! Downloaded ${filteredProducts.length} hang tags.`;
-                
-                setTimeout(() => {
-                    progressContainer.style.display = 'none';
-                    progressBar.style.width = '0%';
-                    generateBtn.disabled = false;
-                    generateBtn.textContent = '📦 Generate All Hang Tags';
-                }, 3000);
+  searchResults.style.display = 'block';
+}
 
-            } catch (error) {
-                console.error('Error generating tags:', error);
-                alert(`Error generating hang tags: ${error.message}`);
-                
-                progressContainer.style.display = 'none';
-                generateBtn.disabled = false;
-                generateBtn.textContent = '📦 Generate All Hang Tags';
-            }
-        }
+function renderSearchError(msg) {
+  searchResults.innerHTML = `<div class="search-no-results" style="color:#c92a2a">${escHtml(msg)}</div>`;
+  searchResults.style.display = 'block';
+}
 
-        // Event listeners
-        document.getElementById('vendorFilter').addEventListener('change', () => {
-            filterProducts();
-            updateProductList();
-        });
+// ─── Queue management ─────────────────────────────────────────────────────────
+function addToQueue(product) {
+  queue.push({ ...product, _id: Date.now() + Math.random() });
+  renderQueue();
+  showToast(`Added: ${product.sku || product.title}`);
+}
 
-        document.getElementById('includeRecon').addEventListener('change', () => {
-            filterProducts();
-            updateProductList();
-        });
+function removeFromQueue(id) {
+  queue = queue.filter(p => p._id !== id);
+  renderQueue();
+}
 
-        document.getElementById('includeKits').addEventListener('change', () => {
-            filterProducts();
-            updateProductList();
-        });
+function updateQueueItem(id, fields) {
+  const idx = queue.findIndex(p => p._id === id);
+  if (idx >= 0) queue[idx] = { ...queue[idx], ...fields };
+  renderQueue();
+}
 
-        document.getElementById('priceChangesOnly').addEventListener('change', () => {
-            filterProducts();
-            updateProductList();
-        });
+function renderQueue() {
+  const list = document.getElementById('queueList');
+  const badge = document.getElementById('queueBadge');
+  const count = document.getElementById('queueCount');
+  const generateBtn = document.getElementById('generateAllBtn');
 
-        document.getElementById('titleSize').addEventListener('input', (e) => {
-            document.getElementById('titleSizeValue').textContent = e.target.value + 'px';
-        });
+  badge.textContent = `${queue.length} product${queue.length !== 1 ? 's' : ''}`;
+  badge.style.display = queue.length > 0 ? 'inline' : 'none';
+  count.textContent = `${queue.length} product${queue.length !== 1 ? 's' : ''} in queue`;
+  generateBtn.disabled = queue.length === 0;
 
-        document.getElementById('priceSize').addEventListener('input', (e) => {
-            document.getElementById('priceSizeValue').textContent = e.target.value + 'px';
-        });
-    </script>
+  if (queue.length === 0) {
+    list.innerHTML = `
+      <div class="queue-empty">
+        <div class="queue-empty-icon">🏷️</div>
+        <p>Search for products on the left and add them here.</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = '';
+  queue.forEach(product => {
+    const hasMSRP = product.compare_at_price && parseFloat(product.compare_at_price) > parseFloat(product.price);
+    const hasIncludes = Array.isArray(product.includes_list) && product.includes_list.length > 0;
+
+    const item = document.createElement('div');
+    item.className = 'queue-item';
+    item.dataset.id = product._id;
+
+    const badges = [
+      product.show_recon_banner ? '<span class="tag-badge badge-recon">Recon</span>' : '',
+      hasMSRP ? '<span class="tag-badge badge-msrp">MSRP</span>' : '',
+      hasIncludes ? '<span class="tag-badge badge-includes">Includes</span>' : '',
+      product.top_banner ? '<span class="tag-badge badge-banner">Banner</span>' : ''
+    ].join('');
+
+    item.innerHTML = `
+      <div class="queue-item-header">
+        ${product.image_url
+          ? `<img class="queue-thumb" src="${escHtml(product.image_url)}" alt="" loading="lazy">`
+          : `<div class="queue-thumb-placeholder">🔧</div>`}
+        <div class="queue-item-info">
+          <div class="queue-item-sku">${escHtml(product.sku || product.handle)}${badges}</div>
+          <div class="queue-item-title">${escHtml(product.title)}</div>
+          <div class="queue-item-meta">$${product.price}${hasMSRP ? ` · MSRP $${product.compare_at_price}` : ''}</div>
+        </div>
+        <div class="queue-item-actions">
+          <button class="btn btn-secondary btn-sm edit-toggle-btn">Edit ▾</button>
+          <button class="btn btn-secondary btn-sm single-dl-btn" title="Download this tag">⬇</button>
+          <button class="btn btn-danger btn-sm remove-btn">✕</button>
+        </div>
+      </div>
+      <div class="queue-edit-form" id="editForm-${product._id}">
+        <div class="edit-grid">
+          <div class="span2">
+            <label>Title</label>
+            <input type="text" name="title" value="${escAttr(product.title)}" placeholder="Product title">
+          </div>
+          <div>
+            <label>Sale Price ($)</label>
+            <input type="number" name="price" value="${escAttr(product.price)}" step="0.01" min="0">
+          </div>
+          <div>
+            <label>MSRP / Compare-at Price ($)</label>
+            <input type="number" name="compare_at_price" value="${escAttr(product.compare_at_price || '')}" step="0.01" min="0" placeholder="Leave blank to hide">
+          </div>
+          <div class="span2">
+            <label>Included Items (one per line)</label>
+            <textarea name="includes_list" placeholder="XPH14Z&#10;XDT19Z&#10;Battery&#10;Charger">${escHtml((product.includes_list || []).join('\n'))}</textarea>
+          </div>
+          <div>
+            <label>Top Accent Banner Text</label>
+            <input type="text" name="top_banner" value="${escAttr(product.top_banner || '')}" placeholder='e.g. "XGT 40V max"'>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding-top:24px;">
+            <input type="checkbox" name="show_recon_banner" id="recon-${product._id}" ${product.show_recon_banner ? 'checked' : ''} style="width:auto;">
+            <label for="recon-${product._id}" style="margin:0;cursor:pointer;">Factory Reconditioned banner</label>
+          </div>
+        </div>
+        <div class="edit-form-actions">
+          <button class="btn btn-primary btn-sm save-edit-btn">Save Changes</button>
+          <button class="btn btn-secondary btn-sm cancel-edit-btn">Cancel</button>
+        </div>
+      </div>
+    `;
+
+    // Wire up buttons
+    item.querySelector('.edit-toggle-btn').addEventListener('click', () => {
+      const form = item.querySelector('.queue-edit-form');
+      form.classList.toggle('open');
+    });
+
+    item.querySelector('.cancel-edit-btn').addEventListener('click', () => {
+      item.querySelector('.queue-edit-form').classList.remove('open');
+    });
+
+    item.querySelector('.save-edit-btn').addEventListener('click', () => {
+      const form = item.querySelector('.queue-edit-form');
+      const includesRaw = form.querySelector('[name="includes_list"]').value;
+      updateQueueItem(product._id, {
+        title: form.querySelector('[name="title"]').value.trim(),
+        price: form.querySelector('[name="price"]').value,
+        compare_at_price: form.querySelector('[name="compare_at_price"]').value,
+        includes_list: includesRaw.split('\n').map(s => s.trim()).filter(Boolean),
+        top_banner: form.querySelector('[name="top_banner"]').value.trim(),
+        show_recon_banner: form.querySelector('[name="show_recon_banner"]').checked
+      });
+      showToast('Changes saved.');
+    });
+
+    item.querySelector('.single-dl-btn').addEventListener('click', () => {
+      generateSingleTag(product);
+    });
+
+    item.querySelector('.remove-btn').addEventListener('click', () => {
+      removeFromQueue(product._id);
+    });
+
+    list.appendChild(item);
+  });
+}
+
+// ─── Generation ───────────────────────────────────────────────────────────────
+function getFormat() { return document.getElementById('formatSelect').value; }
+
+async function generateSingleTag(product) {
+  setProgress(true, `Generating tag for ${product.sku || product.title}…`);
+  try {
+    const format = getFormat();
+    const resp = await fetch('/api/generate-tag', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product, format })
+    });
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.error || 'Generation failed');
+    }
+    await downloadResponse(resp, `${product.sku || product.handle || 'hangtag'}-hangtag`);
+    showToast('Tag downloaded!', 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    setProgress(false);
+  }
+}
+
+document.getElementById('generateAllBtn').addEventListener('click', async () => {
+  if (queue.length === 0) return;
+  const format = getFormat();
+  setProgress(true, `Generating ${queue.length} hang tag${queue.length !== 1 ? 's' : ''}…`);
+  document.getElementById('generateAllBtn').disabled = true;
+
+  try {
+    if (queue.length === 1) {
+      await generateSingleTag(queue[0]);
+    } else {
+      const resp = await fetch('/api/generate-tags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ products: queue, format })
+      });
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.error || 'Generation failed');
+      }
+      await downloadResponse(resp, `hang-tags-${date()}`);
+      showToast(`Downloaded ${queue.length} hang tags!`, 'success');
+    }
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    setProgress(false);
+    document.getElementById('generateAllBtn').disabled = queue.length === 0;
+  }
+});
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+async function downloadResponse(resp, basename) {
+  const cd = resp.headers.get('Content-Disposition') || '';
+  const fnMatch = cd.match(/filename="([^"]+)"/);
+  const contentType = resp.headers.get('Content-Type') || '';
+  let ext = 'pdf';
+  if (contentType.includes('zip')) ext = 'zip';
+  else if (contentType.includes('png')) ext = 'png';
+  const filename = fnMatch ? fnMatch[1] : `${basename}.${ext}`;
+  const blob = await resp.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+function setProgress(active, label = '') {
+  document.getElementById('progressWrap').style.display = active ? 'block' : 'none';
+  document.getElementById('progressLabel').style.display = active ? 'block' : 'none';
+  document.getElementById('progressLabel').textContent = label;
+  if (active) {
+    let w = 0;
+    clearInterval(window._progressTimer);
+    window._progressTimer = setInterval(() => {
+      w = Math.min(w + Math.random() * 12, 88);
+      document.getElementById('progressFill').style.width = w + '%';
+    }, 250);
+  } else {
+    clearInterval(window._progressTimer);
+    document.getElementById('progressFill').style.width = '100%';
+    setTimeout(() => {
+      document.getElementById('progressFill').style.width = '0%';
+    }, 500);
+  }
+}
+
+let _toastTimer;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (type ? ` ${type}` : '');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+function escHtml(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) { return escHtml(s); }
+function date() { return new Date().toISOString().slice(0,10); }
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+loadSettings();
+renderQueue();
+</script>
 </body>
 </html>
